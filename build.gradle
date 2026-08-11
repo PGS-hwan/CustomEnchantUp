@@ -1,0 +1,61 @@
+plugins {
+    id 'java'
+    id 'com.gradleup.shadow' version '9.3.1'
+}
+
+group = 'com.github.hwan.customenchantup'
+version = '1.0.0'
+def pluginVersion = version
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    flatDir { dirs 'libs' }
+    maven { url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
+    maven { url = "https://oss.sonatype.org/content/groups/public/" }
+    maven { url = "https://repo.rosewooddev.io/repository/public/"}
+    maven { url = "https://repo.md-5.net/content/repositories/snapshots/"}
+    maven { url = "https://jitpack.io" }
+}
+
+dependencies {
+    compileOnly 'org.spigotmc:spigot-api:26.1-R0.1-SNAPSHOT'
+    compileOnly 'com.github.YiC200333:XConomyAPI:2.19.1'
+    compileOnly 'org.black_ixx:playerpoints:3.3.3'
+}
+
+tasks.named('compileJava') {
+    options.encoding = 'UTF-8'
+}
+
+tasks.named('processResources') {
+    filteringCharset = 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand(version: pluginVersion)
+    }
+}
+
+// 创建包含所有依赖的 JAR 文件
+shadowJar {
+    archiveFileName = "${project.name}-${project.version}.jar"
+    
+    relocate 'org.bstats', 'com.github.hwan.julyguildplus.libs.bstats'
+    relocate 'parsii', 'libs.pari'
+    relocate 'org.apache.commons', 'libs.org.apache.commons'
+    
+    exclude 'META-INF/*.SF'
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+    mergeServiceFiles()
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    options.release = 8
+    options.compilerArgs.add('-Xlint:-options')
+}
+
+// 禁用测试任务（项目没有有效的测试）
+test {
+    enabled = false
+}

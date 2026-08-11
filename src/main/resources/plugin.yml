@@ -1,0 +1,17 @@
+name: CustomEnchantUp
+main: com.github.hwan.customenchantup.CustomEnchantUp
+author: Hwan
+version: ${version}
+softdepend: [XConomy, PlayerPoints]
+commands:
+  ceu:
+    description: "CustomEnchantUp 主命令"
+    usage: "/ceu <命令> [选项]"
+    aliases: [ ceu ]
+permissions:
+  ceu.user:
+    description: "CustomEnchantUp 用户基础命令"
+    default: true
+  ceu.admin:
+    description: "CustomEnchantUp 管理员命令"
+    default: op

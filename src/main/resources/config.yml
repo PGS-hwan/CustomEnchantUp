@@ -1,0 +1,74 @@
+#
+#  ██████╗███████╗██╗   ██╗
+# ██╔════╝██╔════╝██║   ██║
+# ██║     █████╗  ██║   ██║
+# ██║     ██╔══╝  ██║   ██║
+# ╚██████╗███████╗╚██████╔╝
+#  ╚═════╝╚══════╝ ╚═════╝ 
+
+# CustomEnchantUp - 主配置文件
+# Version: 1.0.0
+
+# ===========
+# 经济系统配置
+# ===========
+# 受支持的经济系统: xconomy, playerpoints, classic
+economy:
+  type: xconomy
+  
+  # XConomy 配置
+  xconomy:
+    # 升级物品所需花费
+    upgrade-cost: 20000
+    # 修复物品所需花费
+    fix-cost: 50000
+  
+  # PlayerPoints 配置
+  playerpoints:
+    # 升级物品所需花费
+    upgrade-cost: 200
+    # 修复物品所需花费
+    fix-cost: 500
+
+  # Classic 配置（消耗背包中的物品）
+  classic:
+    repair:
+      HELMET:
+        DIAMOND: 3
+      CHESTPLATE:
+        DIAMOND: 5
+    upgrade:
+      HELMET:
+        DIAMOND: 2
+      CHESTPLATE:
+        DIAMOND: 4
+
+# ===========
+# 升级系统配置
+# ===========
+upgrade:
+  # 升级成功的概率 (0.0 - 1.0)
+  # 0.0 = 0% 成功率, 1.0 = 100% 成功率
+  success-chance: 0.5
+  
+  # 附魔等级最大限制 (到限制后无法继续往下升级)
+  max-level: 10
+  
+  # 单独指定某个附魔的最大等级
+  single-max-level:
+    DURABILITY: 5
+  
+  # 阻止升级的附魔列表
+  # 这些附魔不会被升级功能影响
+  blocked-enchantments:
+    - "ARROW_INFINITE"
+    - "KNOCKBACK"
+    - "ARROW_KNOCKBACK"
+    - "SILK_TOUCH"
+    - "THORNS"
+
+# =======
+# 调试选项
+# =======
+# 启用调试模式会在控制台输出更多信息
+debug: false

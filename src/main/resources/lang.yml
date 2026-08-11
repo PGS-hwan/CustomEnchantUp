@@ -1,0 +1,100 @@
+#
+#  ██████╗███████╗██╗   ██╗
+# ██╔════╝██╔════╝██║   ██║
+# ██║     █████╗  ██║   ██║
+# ██║     ██╔══╝  ██║   ██║
+# ╚██████╗███████╗╚██████╔╝
+#  ╚═════╝╚══════╝ ╚═════╝ 
+
+# CustomEnchantUp - 语言配置文件
+# Version: 1.0.0
+
+# 前缀设置
+prefix: "&6CustomEnchantUp &8» "
+
+# 命令使用说明
+commands:
+  help: "&f/ceu help &7- &f显示帮助信息"
+  help_admin: "&f/ceu admin <命令> &7- &f管理员命令"
+
+# 帮助信息
+help:
+  title: "&6========== CustomEnchantUp 帮助 =========="
+  fix: "&f/ceu fix &7- &f修复手中物品耐久"
+  repair: "&f/ceu repair &7- &f修复手中物品耐久"
+  upgrade: "&f/ceu upgrade &7- &f升级手中物品的附魔等级"
+  admin_fix: "&f/ceu admin fix [玩家名] &7- &f修复物品（仅管理员）"
+  admin_repair: "&f/ceu admin repair [玩家名] &7- &f修复物品（仅管理员）"
+  admin_upgrade: "&f/ceu admin upgrade [玩家名] &7- &f升级物品（仅管理员）"
+  reload: "&f/ceu reload &7- &f重载配置文件（仅管理员）"
+  footer: "&6=========================="
+
+# 修复命令消息
+fix:
+  success: "&a修复成功!"
+  no_durability: "&a当前手持物品无需修复!"
+  no_item: "&7当前未手持任何物品!"
+  insufficient_balance: "&8你的余额不足以修复该物品!"
+  insufficient_material: "&c背包内材料不足以支付此次修复"
+  classic_not_configured: "&c当前物品未配置 Classic 消耗材料"
+  
+# 升级命令消息
+upgrade:
+  success: "&a升级成功!"
+  failed: "&c升级失败!"
+  no_enchantment: "&7当前手持物品不存在可升级附魔"
+  insufficient_balance: "&c你的余额不足以升级该物品"
+  insufficient_material: "&c背包内材料不足以支付此次升级"
+  classic_not_configured: "&c当前物品未配置 Classic 消耗材料"
+  no_upgradeable: "&7当前不存在可升级的附魔"
+
+# 经济系统相关消息
+economy:
+  no_system: "&c未检测到已安装的经济系统插件"
+  system_error: "&c经济系统错误"
+  xconomy: "&aXConomy"
+  playerpoints: "&aPlayerPoints"
+  classic: "&aClassic"
+
+# 权限相关消息
+permission:
+  denied: "&c你没有权限执行该命令"
+  admin_required: "&c该命令仅管理员可用"
+
+# 管理员命令消息
+admin:
+  fix:
+    success: "&a已为玩家 &f%player% &a修复物品"
+    failed: "&c无法修复玩家 &f%player% &c的物品"
+    target_success: "&a管理员已为你修复物品"
+    no_durability: "&a该玩家的物品无需修复"
+    no_item: "&c该玩家未手持任何物品"
+  upgrade:
+    success: "&a已为玩家 &f%player% &a升级物品"
+    failed: "&c无法升级玩家 &f%player% &c的物品"
+    target_success: "&a管理员已为你升级物品"
+    no_upgradeable: "&c该玩家手持物品无法升级"
+    no_item: "&c该玩家未手持任何物品"
+  player_not_found: "&c未找到在线玩家 &f%player%"
+  usage: "&f使用方式: /ceu admin <fix|repair|upgrade> [玩家名]"
+  no_player_name: "&f请指定玩家名"
+  no_item: "&c该玩家手上没有物品"
+  unknown_subcommand: "&c未知的子命令"
+  repair:
+    success: "&a已为玩家 &f%player% &a修复物品"
+    failed: "&c无法修复玩家 &f%player% &c的物品"
+    target_success: "&a管理员已为你修复物品"
+    no_durability: "&a该玩家的物品无需修复"
+    no_item: "&c该玩家未手持任何物品"
+
+# 重载命令消息
+reload:
+  success: "&a配置文件已重载"
+  failed: "&c配置文件重载失败"
+
+# 错误消息
+error:
+  console_only_error: "&c该命令仅支持玩家在游戏内使用"
+  unknown_command: "&c未知命令，请输入 &f/ceu help &c查看可用命令"
+  execute_failed: "&c执行命令时出错"
+  invalid_syntax: "&c命令语法错误，请输入 &f/ceu help &c查看正确语法"

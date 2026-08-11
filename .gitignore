@@ -1,0 +1,8 @@
+# Created by .ignore support plugin (hsz.mobi)
+*.iml
+.gradle
+.vscode
+build
+proguard.conf
+proguard-dictionary.txt
+proguard
