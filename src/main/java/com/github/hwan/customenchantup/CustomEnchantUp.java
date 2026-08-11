@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bstats.bukkit.Metrics;
 
 import com.github.hwan.customenchantup.commands.CommandManager;
 import com.github.hwan.customenchantup.commands.CommandTabCompleter;
@@ -37,6 +38,7 @@ public final class CustomEnchantUp extends JavaPlugin {
         reloadConfig();
         pluginConfig = getConfig();
         configManager.loadConfigs();
+        new Metrics(this, 33299);
         
         if (Bukkit.getPluginManager().getPlugin("XConomy") != null) {
             xConomyAPI = new XConomyAPI();
