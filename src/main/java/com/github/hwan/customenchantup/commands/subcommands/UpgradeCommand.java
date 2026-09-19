@@ -12,6 +12,7 @@ import org.bukkit.Sound;
 import com.github.hwan.customenchantup.CustomEnchantUp;
 import com.github.hwan.customenchantup.config.ConfigManager;
 import com.github.hwan.customenchantup.utils.EnchantmentUpgradeService;
+import com.github.hwan.customenchantup.utils.UpgradePityService;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -22,11 +23,13 @@ public class UpgradeCommand extends AbstractSubCommand {
     private ConfigManager configManager;
     private Random randomGenerator = new Random();
     private EnchantmentUpgradeService upgradeService;
+    private UpgradePityService pityService;
 
     public UpgradeCommand(ConfigManager configManager) {
         super("upgrade", null, true);
         this.configManager = configManager;
         this.upgradeService = new EnchantmentUpgradeService(configManager);
+        this.pityService = new UpgradePityService(CustomEnchantUp.getInstance());
     }
 
     @Override
@@ -134,7 +137,15 @@ public class UpgradeCommand extends AbstractSubCommand {
     }
 
     private void finishUpgrade(Player player, ItemStack itemInHand) {
-        if (!isSuccessByChance(configManager.getSuccessChance())) {
+        boolean pityEnabled = configManager.isPityEnabled();
+        int pityAttempts = configManager.getPityAttempts();
+        boolean guaranteed = pityEnabled && pityService.shouldGuarantee(
+            player.getUniqueId(), pityAttempts, configManager.getPityGuaranteedSuccesses());
+        boolean success = guaranteed || isSuccessByChance(configManager.getSuccessChance());
+        if (pityEnabled) {
+            pityService.recordAttempt(player.getUniqueId(), player.getName(), success, pityAttempts);
+        }
+        if (!success) {
             player.sendMessage(getPrefix() + configManager.getMessage("upgrade.failed"));
             playSound(player, "random-failure");
             return;

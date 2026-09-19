@@ -3,22 +3,24 @@
 ![CustomEnchantUp](./docs/assets/CustomEnchantUp.png)
 
 [![GitHub](https://img.shields.io/badge/GitHub-CustomEnchantUp-blue?logo=github)](https://github.com/PGS-hwan/CustomEnchantUp)
-![Java](https://img.shields.io/badge/Java-21-red?logo=java)
+![Java](https://img.shields.io/badge/Java-8%2B-red?logo=java)
 ![Gradle](https://img.shields.io/badge/Build-Gradle-green?logo=gradle)
 ![License](https://img.shields.io/badge/License-GPL3.0-orange?logo=gpl-3.0)
 
-一款强大的 Spigot/Bukkit 服务器插件，提供附魔升级和物品修复功能，支持多种经济插件。
+一款 Spigot/Bukkit 服务器插件，提供附魔升级和物品修复功能，支持经济插件或背包材料消费。
 
 ## 项目概述
 
-本插件允许玩家使用服务器经济系统修复手中物品耐久，并对附魔物品执行升级操作。插件支持 XConomy 和 PlayerPoints 两种经济接口。
+本插件允许玩家消耗经济余额、点数或背包材料，修复手中物品耐久并对附魔物品执行升级操作。插件支持 XConomy、PlayerPoints 和 Classic 三种消费模式。
 
 ## 核心功能
 
 - `fix` / `repair`：修复玩家手持物品的耐久
-- `upgrade`：提升手持物品附魔等级，支持可配置成功率
+- `upgrade`：提升手持物品附魔等级，支持可配置成功率和按玩家独立统计的保底机制
 - `reload`：重载配置文件
 - `admin`：管理员命令，用于修复或升级指定玩家的物品
+- 跨版本声音兼容：启动和重载时通过 XSound 映射自动转换已收录的新旧 Bukkit 声音名称
+- 保底进度持久化：按玩家 UUID 保存，并记录最近一次升级使用的玩家名
 - 语言文件支持：所有提示消息可通过 `lang.yml` 自定义
 
 ## 系统要求
@@ -62,9 +64,9 @@
 ./gradlew clean build
 ```
 
-构建生成的插件 JAR 位于 `build/libs/` 目录。
+构建生成的完整插件 JAR 位于 `build/libs/` 目录。
 
-## 📖 更多内容
+## 更多内容
 
 ### 统计数据
 

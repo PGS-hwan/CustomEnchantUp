@@ -8,7 +8,7 @@
 # CustomEnchantUp - 主配置文件
 
 # 配置文件版本（请不要手动更改此项设置）
-version: 1.1.0
+version: 1.1.1
 
 # ===========
 # 经济系统配置
@@ -52,7 +52,16 @@ upgrade:
   # 0.0 = 0% 成功率, 1.0 = 100% 成功率
   success-chance: 0.5
 
-  # 升级动作的声音；请使用当前服务端版本支持的 Bukkit Sound 名称
+  # 玩家升级保底（每名玩家独立统计，重启后保留进度）
+  # 自然成功会计入 guaranteed-successes；仅扣除费用后的升级尝试会累计次数
+  pity:
+    enabled: true
+    # 每个保底周期包含的升级次数
+    attempts: 10
+    # 每个周期内至少成功的次数（范围为 1 到 attempts）
+    guaranteed-successes: 5
+
+  # 升级动作的声音；启动和重载时会按 XSound 映射自动转换新旧 Bukkit Sound 名称
   actions:
     success:
       sound: BLOCK_ANVIL_USE

@@ -38,6 +38,16 @@ CustomEnchantUp 支持 Java 8 及以上，以及 1.8.8 至 26.1 的 Spigot / Pap
 
 使用 `upgrade.success-chance` 设置，取值为 `0.0` 至 `1.0`：`0.5` 表示 50%，`1.0` 表示必定成功，`0.0` 表示必定失败。
 
+## 如何配置升级保底？
+
+将 `upgrade.pity.enabled` 设为 `true`，使用 `upgrade.pity.attempts` 设置周期内的付费升级次数，并使用 `upgrade.pity.guaranteed-successes` 设置该周期至少成功的次数。例如 `attempts: 10`、`guaranteed-successes: 5` 表示每名玩家每 10 次付费升级至少成功 5 次。
+
+保底进度按 UUID 保存在 `pity-data.yml` 中，重启后不会丢失。自然成功会计入周期；未扣除费用或材料的失败操作和管理员升级不会计入。
+
+## 为什么低版本服务器没有升级声音？
+
+插件会在启动和执行 `/ceu reload` 时通过 XSound 的跨版本映射自动转换已收录的新旧 Bukkit 声音名称。例如，1.8.8 会将 `BLOCK_ANVIL_USE` 转换为 `ANVIL_USE`，转换结果会写回 `config.yml`。如果控制台仍提示某个声音不受支持，说明名称无法识别，或该声音在当前服务端没有可用实现；此时请改用该服务端 Bukkit API 提供的声音。
+
 ## 如何配置 classic 模式的消耗物品？
 
 将 `economy.type` 设为 `classic`，再按操作类型和装备槽位设置材料与数量。例如：

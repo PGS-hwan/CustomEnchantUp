@@ -1,10 +1,12 @@
 package com.github.hwan.customenchantup.config;
 
+import com.cryptomorin.xseries.XSound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -16,6 +18,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,7 +56,61 @@ public class ConfigManager {
 
     public void loadConfigs() {
         this.mainConfig = plugin.getConfig();
+        updateSoundNamesForServerVersion();
         loadLanguageConfig();
+    }
+
+    private void updateSoundNamesForServerVersion() {
+        ConfigurationSection actions = mainConfig.getConfigurationSection("upgrade.actions");
+        if (actions == null) {
+            return;
+        }
+
+        boolean changed = false;
+        for (String action : actions.getKeys(false)) {
+            String path = "upgrade.actions." + action + ".sound";
+            String configuredName = mainConfig.getString(path, "");
+            if (configuredName == null || configuredName.trim().isEmpty()) {
+                continue;
+            }
+
+            String normalizedName = configuredName.trim().toUpperCase();
+            if (isSoundAvailable(normalizedName)) {
+                continue;
+            }
+
+            String compatibleName = findCompatibleSoundName(normalizedName);
+            if (compatibleName == null) {
+                plugin.getLogger().warning("当前服务端不支持声音 " + configuredName + "（配置路径: " + path + "）");
+                continue;
+            }
+
+            mainConfig.set(path, compatibleName);
+            plugin.getLogger().info("已将声音 " + configuredName + " 转换为当前服务端支持的 " + compatibleName);
+            changed = true;
+        }
+
+        if (changed) {
+            plugin.saveConfig();
+        }
+    }
+
+    private String findCompatibleSoundName(String configuredName) {
+        Optional<XSound> matchedSound = XSound.of(configuredName);
+        if (!matchedSound.isPresent()) {
+            return null;
+        }
+        Sound bukkitSound = matchedSound.get().get();
+        return bukkitSound == null ? null : bukkitSound.name();
+    }
+
+    private boolean isSoundAvailable(String soundName) {
+        try {
+            Sound.valueOf(soundName);
+            return true;
+        } catch (IllegalArgumentException exception) {
+            return false;
+        }
     }
 
     public String getEconomyType() {
@@ -196,6 +253,19 @@ public class ConfigManager {
 
     public double getSuccessChance() {
         return mainConfig.getDouble("upgrade.success-chance", 50.0);
+    }
+
+    public boolean isPityEnabled() {
+        return mainConfig.getBoolean("upgrade.pity.enabled", false);
+    }
+
+    public int getPityAttempts() {
+        return Math.max(1, mainConfig.getInt("upgrade.pity.attempts", 10));
+    }
+
+    public int getPityGuaranteedSuccesses() {
+        int guaranteedSuccesses = mainConfig.getInt("upgrade.pity.guaranteed-successes", 1);
+        return Math.max(1, Math.min(guaranteedSuccesses, getPityAttempts()));
     }
 
     public String getUpgradeSound(String action) {

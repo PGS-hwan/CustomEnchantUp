@@ -3,11 +3,11 @@
 ![CustomEnchantUp](./assets/CustomEnchantUp.png)
 
 [![GitHub](https://img.shields.io/badge/GitHub-CustomEnchantUp-blue?logo=github)](https://github.com/PGS-hwan/CustomEnchantUp)
-![Java](https://img.shields.io/badge/Java-21-red?logo=java)
+![Java](https://img.shields.io/badge/Java-8%2B-red?logo=java)
 ![Gradle](https://img.shields.io/badge/Build-Gradle-green?logo=gradle)
 ![License](https://img.shields.io/badge/License-GPL3.0-orange?logo=gpl-3.0)
 
-CustomEnchantUp 是一款玩家物品修复与附魔升级的 Bukkit/Spigot 插件，支持 XConomy 和 PlayerPoints 两种经济系统。
+CustomEnchantUp 是一款玩家物品修复与附魔升级的 Bukkit/Spigot 插件，支持 XConomy、PlayerPoints 和背包材料三种消费模式，并提供按玩家持久化的升级保底与跨版本声音名称转换。
 
 ## 兼容环境
 
