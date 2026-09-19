@@ -25,9 +25,10 @@ public class CommandManager implements CommandExecutor {
     }
 
     private void registerSubCommands() {
+        UpgradeCommand upgradeCommand = new UpgradeCommand(configManager);
         subCommands.put("fix", new FixCommand(configManager));
         subCommands.put("repair", new FixCommand(configManager));
-        subCommands.put("upgrade", new UpgradeCommand(configManager));
+        subCommands.put("upgrade", upgradeCommand);
         subCommands.put("admin", new AdminCommand(configManager));
         subCommands.put("help", new HelpCommand(configManager));
         subCommands.put("reload", new ReloadCommand(configManager));
@@ -74,9 +75,7 @@ public class CommandManager implements CommandExecutor {
         sender.sendMessage(configManager.getMessage("help.repair"));
         sender.sendMessage(configManager.getMessage("help.upgrade"));
         if (sender.hasPermission("ceu.admin")) {
-            sender.sendMessage(configManager.getMessage("help.admin_fix"));
-            sender.sendMessage(configManager.getMessage("help.admin_repair"));
-            sender.sendMessage(configManager.getMessage("help.admin_upgrade"));
+            sender.sendMessage(configManager.getMessage("commands.help_admin"));
             sender.sendMessage(configManager.getMessage("help.reload"));
         }
         sender.sendMessage(configManager.getMessage("help.footer"));

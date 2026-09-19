@@ -23,6 +23,7 @@ public class ReloadCommand extends AbstractSubCommand {
         if (!checkPermission(sender, configManager)) return;
 
         try {
+            pluginInstance.migrateConfigs();
             pluginInstance.reloadConfig();
             configManager.loadConfigs();
             sender.sendMessage(configManager.getPrefix() + configManager.getMessage("reload.success"));

@@ -1,5 +1,8 @@
 package com.github.hwan.customenchantup.config;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
@@ -13,8 +16,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ConfigManager {
+    private static final Pattern LEGACY_HEX_COLOR = Pattern.compile("&#([0-9a-fA-F]{6})");
+    private static final Pattern LEGACY_COLOR = Pattern.compile("&([0-9a-fk-orA-FK-OR])");
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
+    private static final LegacyComponentSerializer LEGACY_SECTION =
+        LegacyComponentSerializer.legacySection();
     private static ConfigManager instance;
     private Configuration mainConfig;
     private Configuration languageConfig;
@@ -188,6 +198,10 @@ public class ConfigManager {
         return mainConfig.getDouble("upgrade.success-chance", 50.0);
     }
 
+    public String getUpgradeSound(String action) {
+        return mainConfig.getString("upgrade.actions." + action + ".sound", "");
+    }
+
     public int getMaxLevel() {
         return mainConfig.getInt("upgrade.max-level", 10);
     }
@@ -220,20 +234,73 @@ public class ConfigManager {
         return false;
     }
 
-    private String translateColors(String text) {
+    private String formatMessage(String text) {
         if (text == null) {
             return "";
         }
-        return ChatColor.translateAlternateColorCodes('&', text);
+        if (!isMiniMessageEnabled()) {
+            return ChatColor.translateAlternateColorCodes('&', text);
+        }
+        Component component = MINI_MESSAGE.deserialize(convertLegacyColors(text));
+        return LEGACY_SECTION.serialize(component);
+    }
+
+    public boolean isMiniMessageEnabled() {
+        return languageConfig.getBoolean("mini-message", false);
+    }
+
+    private String convertLegacyColors(String text) {
+        Matcher hexMatcher = LEGACY_HEX_COLOR.matcher(text);
+        StringBuffer converted = new StringBuffer();
+        while (hexMatcher.find()) {
+            hexMatcher.appendReplacement(converted, "<#" + hexMatcher.group(1) + ">");
+        }
+        hexMatcher.appendTail(converted);
+
+        Matcher colorMatcher = LEGACY_COLOR.matcher(converted.toString());
+        converted = new StringBuffer();
+        while (colorMatcher.find()) {
+            colorMatcher.appendReplacement(converted, legacyTag(colorMatcher.group(1).charAt(0)));
+        }
+        colorMatcher.appendTail(converted);
+        return converted.toString();
+    }
+
+    private String legacyTag(char code) {
+        switch (Character.toLowerCase(code)) {
+            case '0': return "<black>";
+            case '1': return "<dark_blue>";
+            case '2': return "<dark_green>";
+            case '3': return "<dark_aqua>";
+            case '4': return "<dark_red>";
+            case '5': return "<dark_purple>";
+            case '6': return "<gold>";
+            case '7': return "<gray>";
+            case '8': return "<dark_gray>";
+            case '9': return "<blue>";
+            case 'a': return "<green>";
+            case 'b': return "<aqua>";
+            case 'c': return "<red>";
+            case 'd': return "<light_purple>";
+            case 'e': return "<yellow>";
+            case 'f': return "<white>";
+            case 'k': return "<obfuscated>";
+            case 'l': return "<bold>";
+            case 'm': return "<strikethrough>";
+            case 'n': return "<underlined>";
+            case 'o': return "<italic>";
+            case 'r': return "<reset>";
+            default: return "";
+        }
     }
 
     public String getPrefix() {
-        return translateColors(languageConfig.getString("prefix", "&6CustomEnchantUp &8» "));
+        return formatMessage(languageConfig.getString("prefix", "<gold>CustomEnchantUp <dark_gray>» "));
     }
 
     public String getMessage(String path) {
         String message = languageConfig.getString(path, "");
-        return translateColors(message);
+        return formatMessage(message);
     }
 
     public String getMessage(String path, String... replacements) {
@@ -243,7 +310,7 @@ public class ConfigManager {
                 message = message.replace(replacements[i], replacements[i + 1]);
             }
         }
-        return translateColors(message);
+        return formatMessage(message);
     }
 
     public Object get(String path) {

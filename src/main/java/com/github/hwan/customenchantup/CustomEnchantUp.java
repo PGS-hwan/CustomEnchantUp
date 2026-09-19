@@ -11,6 +11,7 @@ import org.bstats.bukkit.Metrics;
 import com.github.hwan.customenchantup.commands.CommandManager;
 import com.github.hwan.customenchantup.commands.CommandTabCompleter;
 import com.github.hwan.customenchantup.config.ConfigManager;
+import com.github.hwan.customenchantup.config.ConfigMigrationService;
 
 import org.black_ixx.playerpoints.PlayerPoints;
 
@@ -28,15 +29,14 @@ public final class CustomEnchantUp extends JavaPlugin {
         pluginInstance = this;
         instance = this;
         
-        configManager = ConfigManager.getInstance(this);
-        
         if (!(new File(getDataFolder(), "config.yml")).exists()) {
             saveDefaultConfig();
         }
-        saveDefaultConfig();
+        new ConfigMigrationService(this).migrateConfigs();
         
         reloadConfig();
         pluginConfig = getConfig();
+        configManager = ConfigManager.getInstance(this);
         configManager.loadConfigs();
         new Metrics(this, 33299);
         
@@ -65,7 +65,6 @@ public final class CustomEnchantUp extends JavaPlugin {
             cmd.setExecutor(ceuCommand);
             cmd.setTabCompleter(new CommandTabCompleter(ceuCommand.getSubCommands()));
         }
-        
         getLogger().info("========================================");
         getLogger().info("");
         getLogger().info("CustomEnchantUp - " + getDescription().getVersion());
@@ -98,5 +97,9 @@ public final class CustomEnchantUp extends JavaPlugin {
     
     public static ConfigManager getConfigManager() {
         return configManager;
+    }
+
+    public void migrateConfigs() {
+        new ConfigMigrationService(this).migrateConfigs();
     }
 }

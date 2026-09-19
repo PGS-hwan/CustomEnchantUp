@@ -22,9 +22,7 @@ public class HelpCommand extends AbstractSubCommand {
         sender.sendMessage(configManager.getMessage("help.repair"));
         sender.sendMessage(configManager.getMessage("help.upgrade"));
         if (sender.hasPermission("ceu.admin")) {
-            sender.sendMessage(configManager.getMessage("help.admin_fix"));
-            sender.sendMessage(configManager.getMessage("help.admin_repair"));
-            sender.sendMessage(configManager.getMessage("help.admin_upgrade"));
+            sender.sendMessage(configManager.getMessage("commands.help_admin"));
             sender.sendMessage(configManager.getMessage("help.reload"));
         }
         sender.sendMessage(configManager.getMessage("help.footer"));

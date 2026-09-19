@@ -2,30 +2,31 @@ package com.github.hwan.customenchantup.commands.subcommands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import com.github.hwan.customenchantup.config.ConfigManager;
+import com.github.hwan.customenchantup.utils.EnchantmentUpgradeService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class AdminCommand extends AbstractSubCommand {
     private ConfigManager configManager;
+    private EnchantmentUpgradeService upgradeService;
 
     public AdminCommand(ConfigManager configManager) {
         super("admin", "ceu.admin", false);
         this.configManager = configManager;
+        this.upgradeService = new EnchantmentUpgradeService(configManager);
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (!checkPermission(sender, configManager)) return;
 
-        if (args.length < 2) {
-            sender.sendMessage(configManager.getPrefix() + configManager.getMessage("admin.usage"));
+        if (args.length < 2 || "help".equalsIgnoreCase(args[1])) {
+            showAdminHelp(sender);
             return;
         }
 
@@ -63,6 +64,14 @@ public class AdminCommand extends AbstractSubCommand {
         }
     }
 
+    private void showAdminHelp(CommandSender sender) {
+        sender.sendMessage(configManager.getMessage("admin.help.title"));
+        sender.sendMessage(configManager.getMessage("admin.help.fix"));
+        sender.sendMessage(configManager.getMessage("admin.help.repair"));
+        sender.sendMessage(configManager.getMessage("admin.help.upgrade"));
+        sender.sendMessage(configManager.getMessage("admin.help.footer"));
+    }
+
     @SuppressWarnings("deprecation")
     private void handleAdminFix(CommandSender sender, Player player, ItemStack targetItem) {
         if (targetItem.getType().getMaxDurability() <= 0 || targetItem.getDurability() <= 0) {
@@ -78,11 +87,11 @@ public class AdminCommand extends AbstractSubCommand {
 
     private void handleAdminUpgrade(CommandSender sender, Player player, ItemStack targetItem) {
         if (targetItem.getEnchantments().isEmpty()) {
-            player.sendMessage(configManager.getPrefix() + configManager.getMessage("admin.upgrade.no_item"));
+            sender.sendMessage(configManager.getPrefix() + configManager.getMessage("admin.upgrade.no_item"));
             return;
         }
 
-        if (tryUpgradeItem(targetItem)) {
+        if (upgradeService.upgradeAll(targetItem)) {
             player.sendMessage(configManager.getPrefix() + configManager.getMessage("admin.upgrade.target_success"));
             sender.sendMessage(configManager.getPrefix() + 
                 configManager.getMessage("admin.upgrade.success").replace("%player%", player.getName()));
@@ -93,36 +102,19 @@ public class AdminCommand extends AbstractSubCommand {
         }
     }
 
-    private boolean tryUpgradeItem(ItemStack targetItem) {
-        Map<Enchantment, Integer> enchantments = targetItem.getEnchantments();
-        boolean wasUpgraded = false;
-
-        for (Map.Entry<Enchantment, Integer> entry : new ArrayList<>(enchantments.entrySet())) {
-            int maxLevel = configManager.getMaxLevel(entry.getKey());
-            if (entry.getValue() < maxLevel && !isEnchantmentBlocked(entry.getKey())) {
-                targetItem.removeEnchantment(entry.getKey());
-                targetItem.addUnsafeEnchantment(entry.getKey(), entry.getValue() + 1);
-                wasUpgraded = true;
-            }
-        }
-
-        return wasUpgraded;
-    }
-
-    private boolean isEnchantmentBlocked(Enchantment enchantment) {
-        return configManager.isEnchantmentBlocked(enchantment);
-    }
-
     @Override
     public List<String> getTabComplete(CommandSender sender, String[] args) {
         List<String> completions = new ArrayList<>();
         if (args.length == 2) {
+            completions.add("help");
             completions.add("fix");
             completions.add("repair");
             completions.add("upgrade");
         } else if (args.length == 3) {
             for (Player player : Bukkit.getOnlinePlayers()) {
-                completions.add(player.getName());
+                if (player != null) {
+                    completions.add(player.getName());
+                }
             }
         }
         return completions;
