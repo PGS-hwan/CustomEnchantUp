@@ -166,13 +166,11 @@ public class UpgradeCommand extends AbstractSubCommand {
 
     private void playSound(Player player, String action) {
         String soundName = configManager.getUpgradeSound(action);
-        if (soundName == null || soundName.isEmpty()) {
+        Sound sound = configManager.resolveSound(soundName);
+        if (sound == null) {
             return;
         }
-        try {
-            player.playSound(player.getLocation(), Sound.valueOf(soundName.toUpperCase()), 1.0F, 1.0F);
-        } catch (IllegalArgumentException ignored) {
-        }
+        player.playSound(player.getLocation(), sound, 1.0F, 1.0F);
     }
 
     private boolean isSuccessByChance(double chance) {

@@ -16,6 +16,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -101,15 +102,30 @@ public class ConfigManager {
             return null;
         }
         Sound bukkitSound = matchedSound.get().get();
-        return bukkitSound == null ? null : bukkitSound.name();
+        if (bukkitSound == null) {
+            return null;
+        }
+        try {
+            Method nameMethod = bukkitSound.getClass().getMethod("name");
+            return (String) nameMethod.invoke(bukkitSound);
+        } catch (ReflectiveOperationException exception) {
+            return null;
+        }
     }
 
     private boolean isSoundAvailable(String soundName) {
+        return resolveSound(soundName) != null;
+    }
+
+    public Sound resolveSound(String soundName) {
+        if (soundName == null || soundName.trim().isEmpty()) {
+            return null;
+        }
         try {
-            Sound.valueOf(soundName);
-            return true;
-        } catch (IllegalArgumentException exception) {
-            return false;
+            Method valueOfMethod = Sound.class.getMethod("valueOf", String.class);
+            return (Sound) valueOfMethod.invoke(null, soundName.trim().toUpperCase());
+        } catch (ReflectiveOperationException | IllegalArgumentException exception) {
+            return null;
         }
     }
 
